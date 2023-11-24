@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Library Management System</h1>
+    </header>
+
+    <main>
+        <section class="book-form">
+            <h2>Add a Book</h2>
+            <form id="bookForm">
+                <label for="bookName">Book Name:</label>
+                <input type="text" id="bookName" required>
+                <button type="submit">Add Book</button>
+            </form>
+        </section>
+
+        <section class="book-list">
+            <h2>Book Records</h2>
+            <div id="bookList"></div>
+        </section>
+
+        <section class="book-return">
+            <h2>Book Return:</h2>
+            <div id="bookReturnList"></div>
+        </section>
+<button id="deleteAllDataBtn">Delete All Data</button>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
