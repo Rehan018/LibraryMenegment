@@ -2,6 +2,7 @@ const bookForm = document.getElementById("bookForm");
 const bookList = document.getElementById("bookList");
 const bookReturnedList = document.getElementById("bookReturnList");
 const books = [];
+
 // Add this event listener to your JavaScript file
 document.getElementById('deleteAllDataBtn').addEventListener('click', async () => {
   try {
@@ -48,6 +49,7 @@ async function onSubmit(bookId) {
     console.error("Error deleting book:", error);
   }
 }
+
 bookForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const bookNameInput = document.getElementById("bookName");
@@ -87,6 +89,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 });
 
+
 async function displayBooks(book) {
   try {
     const span = document.createElement("span");
@@ -96,11 +99,10 @@ async function displayBooks(book) {
     const dueDate = createdAtTimestamp;
     dueDate.setDate(dueDate.getDate());
     dueDate.setMinutes(createdAtTimestamp.getMinutes()+60);
-    console.log(new Date().getHours());
-    console.log(updatedAtdueDate.getHours());
+
     span.innerHTML = `<p> <h2> Book Title :</h2>  ${
       book.bookName
-    }</p><p>  BookTaken: ${updatedAtdueDate.toLocaleString()} </p> <p> Due: ${createdAtTimestamp.toLocaleString()} </p>
+    }</p><p>  BookTaken: ${updatedAtdueDate.toLocaleString()} </p> <p> Due Start: ${createdAtTimestamp.toLocaleString()} </p>
         <p> Fine:$ ${
           (new Date().getHours() - updatedAtdueDate.getHours()) * 10
         }</p>
@@ -111,12 +113,7 @@ async function displayBooks(book) {
     console.error(error);
   }
 }
-//-------------
-function displayFineDetails(fineDetails) {
-  const fineDetailsElement = document.getElementById("fineDetails");
-  fineDetailsElement.textContent = fineDetails;
-}
-//-------------------
+
 
 async function onReturn(bookId) {
   const span = document.getElementById(bookId);

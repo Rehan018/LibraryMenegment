@@ -43,7 +43,11 @@ exports.getFine= async (req, res, next) => {
 exports.createBook = async (req, res) => {
   const { bookName } = req.body;
   try {
-    const book = await Book.create({ bookName });
+    const currentDate = new Date();
+    const dueDate = new Date(currentDate);
+    dueDate.setMinutes(currentDate.getMinutes() + 5); // Set dueDate to 5 minutes later
+
+    const book = await Book.create({ bookName, updatedAt: currentDate, dueDate });
     res.status(201).json(book);
   } catch (error) {
     console.error(error);
@@ -80,46 +84,36 @@ exports.deleteBooks = async (req, res, next) => {
     }
   };
 // ------------------------
-  exports.returnBook = async (req, res) => {
-    const { bookId } = req.body;
-    try {
-      const book = await Book.findByPk(bookId);
-      if (!book) {
-        return res.status(404).json({ err: 'Book not found' });
-      }
-  
-      const fineAmount = calculateFine(book);
-  
-      if (fineAmount > 0) {
-        const Returned = new Date().toLocaleString();
-        const fineRecord = await Fine.create({ Name: book.bookName, fine: fineAmount, Returned });
-        res.json({ message: 'Fine calculated', fineRecord });
-      } else {
-        await book.destroy();
-        res.json({ message: 'Book returned successfully', fine: 0 });
-      }
-    } catch (error) {
-      console.error('Error returning book:', error);
-      res.status(500).json({ error: 'Server error' });
+exports.returnBook = async (req, res) => {
+  const { bookId } = req.body;
+  try {
+    const book = await Book.findByPk(bookId);
+    if (!book) {
+      return res.status(404).json({ err: 'Book not found' });
     }
-  };
 
-  exports.deleteAllData = async (req, res) => {
-    try {
-      await Book.destroy({ where: {} });
-      await Fine.destroy({ where: {} });
-      res.json({ message: 'All data deleted successfully' });
-    } catch (error) {
-      console.error('Error deleting all data:', error);
-      res.status(500).json({ error: 'Server error' });
+    const fineAmount = calculateFine(book);
+
+    if (fineAmount > 0) {
+      const Returned = new Date().toLocaleString();
+      const fineRecord = await Fine.create({ Name: book.bookName, fine: fineAmount, Returned });
+      res.json({ message: 'Fine calculated', fineRecord });
+    } else {
+      await book.destroy();
+      res.json({ message: 'Book returned successfully', fine: 0 });
     }
-  };
+  } catch (error) {
+    console.error('Error returning book:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
 
-  //--------------------
-  const calculateFine = (book) => {
-    const createdAtTimestamp = new Date(book.createdAt);
-    const updatedAtdueDate = new Date(book.updatedAt);
-    const hoursDifference = updatedAtdueDate.getHours() - createdAtTimestamp.getHours();
-    const fineAmount = Math.max(hoursDifference, 0) * 10;
-    return fineAmount;
-  };
+
+const calculateFine = (book) => {
+  const createdAtTimestamp = new Date(book.createdAt);
+  const updatedAtdueDate = new Date(book.updatedAt);
+  const minutesDifference = Math.floor((updatedAtdueDate - createdAtTimestamp) / (1000 * 60));
+  const fineRatePerMinute = 5;
+  const fineAmount = Math.max(minutesDifference, 0) * fineRatePerMinute;
+  return fineAmount;
+};

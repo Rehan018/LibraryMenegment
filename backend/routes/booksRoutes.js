@@ -14,6 +14,7 @@ router.get('/get-fine/:Id',bookController.getFine);
 
 router.get('/get-fine',bookController.getAllFines);
 
-router.post('/delete-all-data',bookController.deleteAllData);
+router.post('/return-book', bookController.returnBook);
+
 
 module.exports = router;
